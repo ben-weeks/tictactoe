@@ -26,10 +26,10 @@ func TicTacToe() {
 
 		// Nested forever loops for each turn, which waits for input and breaks out of it when it's received
 		for {
-			drawBoard()                                         // Draw the board in its current state
-			fmt.Printf("Player %s <col, row>: ", currentPlayer) // Input prompt
-			scanner.Scan()                                      // Scan for input
-			move := strings.TrimSpace(scanner.Text())           // Trim whitespace around input
+			drawBoard()                                        // Draw the board in its current state
+			fmt.Printf("Player %s <col row>: ", currentPlayer) // Input prompt
+			scanner.Scan()                                     // Scan for input
+			move := strings.TrimSpace(scanner.Text())          // Trim whitespace around input
 
 			var newRow, newCol int // Initialize new row and column
 
@@ -38,7 +38,7 @@ func TicTacToe() {
 			// Second input - error reported during scanning
 
 			// This essentially converts the input to valid integers
-			_, err := fmt.Sscanf(move, "%d,%d", &newCol, &newRow)
+			_, err := fmt.Sscanf(move, "%d %d", &newRow, &newCol)
 
 			// Check boundaries on the input and respond appropriately
 			if err != nil || newRow > (size-1) || newRow < 0 || newCol > (size-1) || newCol < 0 {
@@ -57,7 +57,8 @@ func TicTacToe() {
 
 			// Check for a win
 			if checkWin(currentPlayer) {
-				fmt.Printf("Player %s won!", currentPlayer)
+				fmt.Printf("Player %s won!\n", currentPlayer)
+				drawBoard()
 				break
 			}
 
@@ -128,15 +129,15 @@ func fullBoard() bool {
 
 func drawBoard() {
 	// Iterate over the game board using this paradigm
-	fmt.Println("     0   1   2") // Print column numbers
+	fmt.Println("   0   1   2") // Print column numbers
 	for col, row := range board {
 		// Formatted print - similar to C
 		// Print row contents and row numbers
-		fmt.Printf("%d  %s | %s | %s", col, row[0], row[1], row[2])
+		fmt.Printf("%d  %s | %s | %s\n", col, row[0], row[1], row[2])
 
 		// Print line to separate board rows
-		if col > 2 {
-			fmt.Println("-----------")
+		if col < size-1 {
+			fmt.Println("  -----------")
 		}
 	}
 	fmt.Println() // Newline
