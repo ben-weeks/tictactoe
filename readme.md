@@ -1,6 +1,6 @@
-# Really simple tic tac toe clone
+# Really simple Tic Tac Toe clone
 
-Just a small implementation of Go that I built in like an hour to start learning Go. To use, just clone the repo and run `go run ./cmd` in the project directory to play.
+Just a small implementation of Tic Tac Toe that I made in like an hour to start learning Go. To use, just clone the repo and run `go run ./cmd` in the project directory to play.
 
 ### Version history
 - **Version 1.0** (4-14-2025):
