@@ -3,6 +3,7 @@ package tictactoe
 import (
 	"bufio"
 	"fmt"
+	"math/rand/v2"
 	"os"
 	"strings"
 )
@@ -20,36 +21,45 @@ func TicTacToe() {
 
 	// Just "for" without anything else is an infinite loop, like "while True:" in Python
 	for {
+
+		var mode bool = startMenu() // false = person; true = computer
+
 		// Initial state of the game - clear the board and start as player 1 'X'
 		clearBoard()
 		currentPlayer := "X"
 
 		// Nested forever loops for each turn, which waits for input and breaks out of it when it's received
 		for {
-			drawBoard()                                        // Draw the board in its current state
-			fmt.Printf("Player %s <col row>: ", currentPlayer) // Input prompt
-			scanner.Scan()                                     // Scan for input
-			move := strings.TrimSpace(scanner.Text())          // Trim whitespace around input
+			drawBoard()            // Draw the board in its current state
+			var newCol, newRow int // Initialize new row and column
 
-			var newRow, newCol int // Initialize new row and column
+			if !mode || currentPlayer == "X" {
+				fmt.Printf("Player %s <col row>: ", currentPlayer) // Input prompt
+				scanner.Scan()                                     // Scan for input
+				move := strings.TrimSpace(scanner.Text())          // Trim whitespace around input
 
-			// Sscanf:
-			// First input - number of scanned items
-			// Second input - error reported during scanning
+				// Sscanf:
+				// First input - number of scanned items
+				// Second input - error reported during scanning
 
-			// This essentially converts the input to valid integers
-			_, err := fmt.Sscanf(move, "%d %d", &newRow, &newCol)
+				// This essentially converts the input to valid integers
+				_, err := fmt.Sscanf(move, "%d %d", &newRow, &newCol)
 
-			// Check boundaries on the input and respond appropriately
-			if err != nil || newRow > (size-1) || newRow < 0 || newCol > (size-1) || newCol < 0 {
-				fmt.Println("Invalid move")
-				continue // Go back to the top of the loop
-			}
+				// Check boundaries on the input and respond appropriately
+				if err != nil || newRow > (size-1) || newRow < 0 || newCol > (size-1) || newCol < 0 {
+					fmt.Println("Invalid move")
+					continue // Go back to the top of the loop
+				}
 
-			// Check if the move is already taken
-			if board[newCol][newRow] != " " {
-				fmt.Println("Position already taken")
-				continue // Go back to the top of the loop
+				// Check if the move is already taken
+				if board[newCol][newRow] != " " {
+					fmt.Println("Position already taken")
+					continue // Go back to the top of the loop
+				}
+			} else {
+				// Computer moves
+				newCol, newRow = chooseMove()
+				fmt.Printf("The computer moved to: %d %d\n", newRow, newCol)
 			}
 
 			// Now there are no errors, the move is in bounds, and the spot is free; update the game board
@@ -113,6 +123,31 @@ func checkWin(player string) bool {
 	}
 
 	return false
+}
+
+func startMenu() bool {
+	scanner := bufio.NewScanner(os.Stdin) // local scanner (regular scanner out of scope) - this kinda sucks but it is what it is
+
+	fmt.Println("Welcome to Tic Tac Toe!")
+	fmt.Println("- Press <1> to play against another human")
+	fmt.Println("- Press any other key to play against the computer")
+	scanner.Scan()
+
+	response := strings.TrimSpace(scanner.Text())
+	return !(response == "1") // Only set to "true" if the response is not 1
+}
+
+// Computer chooses a move; choose completely random open space
+func chooseMove() (int, int) {
+	var col, row int = rand.IntN(3), rand.IntN(3)
+
+	// Keep choosing while not empty
+	for board[col][row] != " " {
+		col, row = rand.IntN(3), rand.IntN(3)
+	}
+
+	// Return location to move
+	return col, row
 }
 
 func fullBoard() bool {
